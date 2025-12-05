@@ -164,21 +164,6 @@ def get_exam_results(exam_id: int, db: Session = Depends(get_db)):
         results=results
     )
     
-# 1. Publish exam
-@router.post("/{exam_id}/publish", response_model=ExamPublishResponse)
-def publish_exam(exam_id: int, db: Session = Depends(get_db)):
-    exam = db.query(Exam).filter(Exam.id == exam_id).first()
-    if not exam:
-        raise HTTPException(status_code=404, detail="Exam not found")
-
-    exam.status = "published"
-    db.add(exam)
-    db.commit()
-    db.refresh(exam)
-
-    link = f"https://teach-assistant.com/exams/{exam_id}"
-    return ExamPublishResponse(exam_id=exam.id, status=exam.status, link=link)
-
 
 # 2. Download exam (HTML template)
 @router.get("/{exam_id}/download", response_model=ExamDownloadResponse)

@@ -28,10 +28,7 @@ from fastapi import Depends,APIRouter
 from sqlalchemy.orm import Session
 from app.models.models import LessonPlan
 from app.schemas.lessonplan import *
-from app.api.v1 import exams
-from app.api.v1 import announce
-
-
+from app.api.v1 import exams,announce,questions,lessons
 
 
 
@@ -59,6 +56,8 @@ app.add_middleware(
 )
 app.include_router(exams.router)
 app.include_router(announce.router)
+app.include_router(questions.router)
+app.include_router(lessons.router)
 
 
 @app.on_event("startup")
@@ -80,26 +79,6 @@ def create_tables(engine):
 def read_root():
     return {"message": "Welcome to Teach-Assistant API"}
 
-
-@app.get("/lessonplan/{lessonplan_id}")
-def get_lessonplan(lessonplan_id: int, db: Session = Depends(get_db)):
-    lessonplan = db.query(models.LessonPlan).filter(models.LessonPlan.id == lessonplan_id).first()
-    if not lessonplan:
-        raise HTTPException(status_code=404, detail="Lesson plan not found")
-    return lessonplan
-
-@app.post("/lessonplan/generate")
-def create_lessonplan(payload: LessonPlanCreate, db: Session = Depends(get_db)):
-    new_plan = LessonPlan(
-        teacher_id=payload.teacher_id,
-        topic=payload.topic,
-        duration_hours=payload.duration_hours,
-        plan=payload.plan
-    )
-    db.add(new_plan)
-    db.commit()
-    db.refresh(new_plan)
-    return new_plan
 
 
 if __name__ == "__main__":
