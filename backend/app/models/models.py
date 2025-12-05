@@ -32,11 +32,9 @@ class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True, autoincrement=True)
     exam_id = Column(Integer, ForeignKey('exams.id'), nullable=False)
-    content = Column(String, nullable=False)
-    question_type = Column(String, nullable=False)  # e.g., 'multiple_choice', 'short_answer'
-    marks = Column(Integer, nullable=False)
-    options = Column(JSONB)  # For multiple choice questions
-    answer = Column(String)  # For short answer questions
+    mcq = Column(JSONB, nullable=True)  # For MCQ questions
+    one_mark = Column(JSONB, nullable=True)  # For 1-mark questions
+    three_mark = Column(JSONB, nullable=True)  # For 3-mark questions
 
 
 class StudentResponse(Base):
